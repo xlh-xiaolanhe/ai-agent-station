@@ -27,6 +27,12 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
 
+        <!-- 扳手工程，通用设计模式框架 -->
+        <dependency>
+            <groupId>cn.bugstack.wrench</groupId>
+            <artifactId>xfg-wrench-starter-design-framework</artifactId>
+        </dependency>
+
         <!-- 系统模块 -->
         <dependency>
             <groupId>com.xiaolanhe</groupId>
