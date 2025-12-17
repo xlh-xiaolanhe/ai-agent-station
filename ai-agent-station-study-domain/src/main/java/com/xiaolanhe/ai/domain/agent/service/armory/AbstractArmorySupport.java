@@ -8,6 +8,11 @@ import com.xiaolanhe.ai.domain.agent.service.armory.factory.DefaultArmoryStrateg
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.concurrent.ExecutionException;
@@ -34,5 +39,40 @@ public abstract class AbstractArmorySupport extends AbstractMultiThreadStrategyR
     @Override
     protected void multiThread(ArmoryCommandEntity armoryCommandEntity, DefaultArmoryStrategyFactory.DynamicContext dynamicContext) throws ExecutionException, InterruptedException, TimeoutException {
         // 缺省的
+    }
+
+    /**
+     * 通用的Bean注册方法
+     *
+     * @param beanName      bean名称
+     * @param beanClass     bean类
+     * @param beanInstance  bean实例
+     */
+    protected synchronized <T> void registerBean(String beanName, Class<T> beanClass, T beanInstance) {
+        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
+
+        // 定义beanDefinition
+        BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(beanClass, () -> beanInstance);
+        BeanDefinition beanDefinition = beanDefinitionBuilder.getRawBeanDefinition();
+        beanDefinition.setScope(BeanDefinition.SCOPE_SINGLETON);
+
+        // 如果beanDefinition已存在，先移除
+        if (beanFactory.containsBeanDefinition(beanName)) {
+            beanFactory.removeBeanDefinition(beanName);
+        }
+
+        beanFactory.registerBeanDefinition(beanName, beanDefinition);
+
+        log.info("注册bean: {}", beanName);
+    }
+
+    /**
+     * 获取bean
+     *
+     * @param beanName bean名称
+     * @return bean实例
+     */
+    protected <T> T getBean(String beanName) {
+        return (T) applicationContext.getBean(beanName);
     }
 }
