@@ -2,6 +2,7 @@ package com.xiaolanhe.ai.domain.agent.service.armory.business.data.impl;
 
 import com.xiaolanhe.ai.domain.agent.adapter.repository.IAgentRepository;
 import com.xiaolanhe.ai.domain.agent.model.entity.ArmoryCommandEntity;
+import com.xiaolanhe.ai.domain.agent.model.valobj.AiAgentEnumVO;
 import com.xiaolanhe.ai.domain.agent.model.valobj.AiClientApiVO;
 import com.xiaolanhe.ai.domain.agent.model.valobj.AiClientModelVO;
 import com.xiaolanhe.ai.domain.agent.service.armory.business.data.ILoadDataStrategy;
@@ -20,7 +21,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @create 2025/12/14 11:41
  */
 @Slf4j
-@Service
+@Service("aiClientModelLoadDataStrategy")
 public class AiClientModelLoadDataStrategy implements ILoadDataStrategy {
 
     @Resource
@@ -41,5 +42,10 @@ public class AiClientModelLoadDataStrategy implements ILoadDataStrategy {
             log.info("查询配置数据(ai_client_model) {}", modelIdList);
             return repository.queryAiClientModelVOByModelIds(modelIdList);
         }, threadPoolExecutor);
+
+        CompletableFuture.allOf(aiClientApiListFuture).thenRun(() -> {
+            dynamicContext.setValue(AiAgentEnumVO.AI_CLIENT_API.getDataName(), aiClientApiListFuture.join());
+            dynamicContext.setValue(AiAgentEnumVO.AI_CLIENT_MODEL.getDataName(), aiClientModelListFuture.join());
+        }).join();
     }
 }
