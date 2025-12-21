@@ -44,8 +44,8 @@ spring:
         connection-timeout: 30000
   ai:
     openai:
-      base-url: https://apis.itedus.cn
-      api-key: sk-vo81adWzUz1G0LBQ1cF1B804A1E04aCdA3B3Cc8285B2C70a
+      base-url: https://api.deepseek.com
+      api-key: your key
 
 
 # 日志

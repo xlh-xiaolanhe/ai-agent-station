@@ -84,7 +84,7 @@ public interface IAiClientConfigDao {
      * @param targetId 目标ID
      * @return AI客户端配置对象列表
      */
-    List<AiClientConfig> queryByTargetTypeAndId(String targetType, String targetId);
+    List<AiClientConfig> queryByTargetTypeAndId(@Param("targetType") String targetType, @Param("targetId") String targetId);
 
     /**
      * 查询启用状态的AI客户端配置
